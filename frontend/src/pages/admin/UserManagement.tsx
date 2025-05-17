@@ -31,6 +31,8 @@ import {
 import { Search, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URI || 'http://localhost:5000/api';
+
 interface User {
   _id: string;
   name: string;
@@ -63,7 +65,7 @@ const UserManagement = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(`${API_BASE_URL}/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
