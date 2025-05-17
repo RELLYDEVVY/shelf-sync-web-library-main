@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useBookStore } from '@/store/bookStore';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
@@ -32,6 +31,8 @@ import {
 } from '@/components/ui/table';
 import { Search, LibraryBig, Check } from 'lucide-react';
 import { toast } from 'sonner';
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URI || 'http://localhost:5000/api';
 
 interface User {
   _id: string;
@@ -71,7 +72,7 @@ const BorrowingManagement = () => {
         throw new Error('Authentication required');
       }
       
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(`${API_BASE_URL}/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

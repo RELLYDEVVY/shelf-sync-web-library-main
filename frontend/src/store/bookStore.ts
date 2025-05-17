@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { toast } from 'sonner';
 import { useAuthStore } from './authStore';
@@ -42,7 +41,7 @@ interface BookState {
   returnBook: (borrowId: string) => Promise<void>;
 }
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URI || 'http://localhost:5000/api';
 
 export const useBookStore = create<BookState>()((set, get) => ({
   books: [],

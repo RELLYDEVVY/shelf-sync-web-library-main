@@ -12,6 +12,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useAuthStore } from '@/store/authStore';
 import { toast as sonnerToast } from 'sonner';
 
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URI || 'http://localhost:5000/api';
+
 interface User {
   _id: string;
   name: string;
@@ -39,7 +41,7 @@ const UsersManagement = () => {
         throw new Error('Authentication required');
       }
       
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(`${API_BASE_URL}/users`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -68,7 +70,7 @@ const UsersManagement = () => {
         throw new Error('Authentication required');
       }
       
-      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {

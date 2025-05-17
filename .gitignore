@@ -1,0 +1,35 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# VSC
+.vscode/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+# Backend
+/backend/.env
+/backend/.env.*
+!/backend/.env.example
+
+# Frontend
+/frontend/.env
+/frontend/.env.*
+!/frontend/.env.example
+
+# Build outputs / Caches
+/build
+/dist
+.parcel-cache
+.next
+out
+.nuxt
+
+# Other
+.DS_Store
+Thumbs.db

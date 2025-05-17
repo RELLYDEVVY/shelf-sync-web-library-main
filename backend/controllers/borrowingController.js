@@ -111,10 +111,33 @@ const getMyBorrowedBooks = asyncHandler(async (req, res) => {
   res.json(transformedBorrowings);
 });
 
+const deleteBorrowingRecord = asyncHandler(async (req, res) => {
+  const borrowing = await Borrowing.findById(req.params.id);
+
+  if (borrowing) {
+    if (!borrowing.returned) {
+      const book = await Book.findById(borrowing.bookId);
+      if (book) {
+        book.quantity += 1;
+        await book.save();
+      } else {
+        console.warn(`Book with ID ${borrowing.bookId} not found while trying to adjust quantity for deleted borrowing record ${borrowing._id}`);
+      }
+    }
+
+    await borrowing.deleteOne();
+    res.json({ message: 'Borrowing record removed' });
+  } else {
+    res.status(404);
+    throw new Error('Borrowing record not found');
+  }
+});
+
 export {
   borrowBook,
   returnBook,
   getAllBorrowings,
   getUserBorrowings,
   getMyBorrowedBooks,
+  deleteBorrowingRecord,
 };
