@@ -41,7 +41,7 @@ interface BookState {
   returnBook: (borrowId: string) => Promise<void>;
 }
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URI || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000/api';
 
 export const useBookStore = create<BookState>()((set, get) => ({
   books: [],

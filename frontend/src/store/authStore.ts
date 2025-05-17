@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { toast } from 'sonner';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URI || 'http://localhost:5000/api'; // Backend API base URL
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000/api'; // Backend API base URL
 
 export type UserRole = 'admin' | 'user';
 

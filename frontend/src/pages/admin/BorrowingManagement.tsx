@@ -32,7 +32,7 @@ import {
 import { Search, LibraryBig, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URI || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000/api';
 
 interface User {
   _id: string;
