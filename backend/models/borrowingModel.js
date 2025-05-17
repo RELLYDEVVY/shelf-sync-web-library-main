@@ -36,13 +36,11 @@ const borrowingSchema = mongoose.Schema(
   }
 );
 
-// Virtual for checking if borrowing is overdue
 borrowingSchema.virtual('isOverdue').get(function() {
   if (this.returned) return false;
   return new Date() > this.dueDate;
 });
 
-// Add index for efficient queries
 borrowingSchema.index({ bookId: 1, userId: 1 });
 borrowingSchema.index({ returned: 1 });
 borrowingSchema.index({ dueDate: 1 });

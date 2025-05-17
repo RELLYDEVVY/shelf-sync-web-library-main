@@ -1,18 +1,11 @@
 import asyncHandler from 'express-async-handler';
 import Book from '../models/bookModel.js';
 
-// @desc    Fetch all books
-// @route   GET /api/books
-// @access  Public (or Private if only logged-in users can see books)
 const getBooks = asyncHandler(async (req, res) => {
-  // Add pagination, search, and filtering later if needed
   const books = await Book.find({});
   res.json(books);
 });
 
-// @desc    Fetch single book
-// @route   GET /api/books/:id
-// @access  Public (or Private)
 const getBookById = asyncHandler(async (req, res) => {
   const book = await Book.findById(req.params.id);
 
@@ -24,9 +17,6 @@ const getBookById = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Create a book
-// @route   POST /api/books
-// @access  Private/Admin
 const createBook = asyncHandler(async (req, res) => {
   const { title, author, isbn, category, quantity, imageUrl } = req.body;
 
@@ -44,16 +34,12 @@ const createBook = asyncHandler(async (req, res) => {
     category,
     quantity,
     imageUrl,
-    // user: req.user._id, // If you want to associate book with the admin who added it
   });
 
   const createdBook = await book.save();
   res.status(201).json(createdBook);
 });
 
-// @desc    Update a book
-// @route   PUT /api/books/:id
-// @access  Private/Admin
 const updateBook = asyncHandler(async (req, res) => {
   const { title, author, isbn, category, quantity, imageUrl } = req.body;
 
@@ -75,14 +61,11 @@ const updateBook = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Delete a book
-// @route   DELETE /api/books/:id
-// @access  Private/Admin
 const deleteBook = asyncHandler(async (req, res) => {
   const book = await Book.findById(req.params.id);
 
   if (book) {
-    await book.deleteOne(); // or book.remove() for older mongoose versions
+    await book.deleteOne(); 
     res.json({ message: 'Book removed' });
   } else {
     res.status(404);

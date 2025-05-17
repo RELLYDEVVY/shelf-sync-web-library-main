@@ -39,7 +39,6 @@ const bookSchema = mongoose.Schema(
   }
 );
 
-// Virtual for checking if book is available
 bookSchema.virtual('isAvailable').get(function() {
   return this.quantity > 0;
 });
