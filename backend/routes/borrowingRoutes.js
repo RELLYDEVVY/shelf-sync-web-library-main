@@ -3,7 +3,7 @@ const router = express.Router();
 import {
   borrowBook,
   returnBook,
-  getAllBorrowedBooks,
+  getAllBorrowings,
   getMyBorrowedBooks,
   deleteBorrowingRecord
 } from '../controllers/borrowingController.js';
@@ -13,7 +13,7 @@ router.route('/').post(protect, borrowBook);
 router.route('/mybooks').get(protect, getMyBorrowedBooks);
 router.route('/:id/return').put(protect, returnBook);
 
-router.route('/').get(protect, admin, getAllBorrowedBooks);
+router.route('/').get(protect, admin, getAllBorrowings);
 router.route('/:id').delete(protect, admin, deleteBorrowingRecord);
 
 export default router;
