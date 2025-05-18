@@ -8,6 +8,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
 import borrowingRoutes from './routes/borrowingRoutes.js';
+import borrowingRequestRoutes from './routes/borrowingRequestRoutes.js';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/users', userRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/borrowing', borrowingRoutes);
+app.use('/api/requests', borrowingRequestRoutes);
 
 app.get('/', (req, res) => {
   res.send('Shelf Sync API is running...');

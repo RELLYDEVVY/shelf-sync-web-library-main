@@ -10,18 +10,25 @@ export interface Book {
   category: string;
   quantity: number;
   imageUrl?: string;
+  availableForRequest?: number; // Added for actual availability
+  isActuallyAvailable?: boolean; // Added for easier frontend use
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface BorrowedBook {
   _id: string;
-  bookId: string;
-  userId: string;
+  bookId: Book;  // Changed from string to Book since it's populated
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
   borrowDate: string;
   dueDate: string;
   returned: boolean;
-  book: Book;
+  returnDate?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -33,6 +40,7 @@ interface BookState {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   fetchBooks: () => Promise<void>;
+  fetchAvailableBooks: (keyword?: string, category?: string) => Promise<void>;
   fetchBorrowedBooks: () => Promise<void>;
   addBook: (book: Omit<Book, '_id'>) => Promise<void>;
   updateBook: (id: string, bookData: Partial<Book>) => Promise<void>;
@@ -41,7 +49,7 @@ interface BookState {
   returnBook: (borrowId: string) => Promise<void>;
 }
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URI;
 
 export const useBookStore = create<BookState>()((set, get) => ({
   books: [],
@@ -72,6 +80,45 @@ export const useBookStore = create<BookState>()((set, get) => ({
     } catch (error) {
       set({ isLoading: false });
       toast.error('Failed to fetch books: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    }
+  },
+  
+  // New method to fetch available books with search functionality
+  fetchAvailableBooks: async (keyword?: string, category?: string) => {
+    set({ isLoading: true });
+    try {
+      const { token } = useAuthStore.getState();
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (keyword) params.append('keyword', keyword);
+      if (category) params.append('category', category);
+      
+      const queryString = params.toString() ? `?${params.toString()}` : '';
+      
+      const response = await fetch(`${API_BASE_URL}/books${queryString}`, {
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch available books');
+      }
+      
+      const data = await response.json();
+      set({ books: data, isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      toast.error('Failed to fetch available books: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   },
   

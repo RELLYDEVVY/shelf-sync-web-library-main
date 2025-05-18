@@ -95,15 +95,14 @@ const BorrowingManagement = () => {
     if (!searchTerm) return true;
     
     const searchTermLower = searchTerm.toLowerCase();
-    const bookMatch = borrow.book && (
-      borrow.book.title?.toLowerCase().includes(searchTermLower) ||
-      borrow.book.author?.toLowerCase().includes(searchTermLower)
+    const bookMatch = borrow.bookId && (
+      borrow.bookId.title?.toLowerCase().includes(searchTermLower) ||
+      borrow.bookId.author?.toLowerCase().includes(searchTermLower)
     );
     
-    const user = users.find(user => user._id === borrow.userId);
-    const userMatch = user && (
-      user.name.toLowerCase().includes(searchTermLower) ||
-      user.email.toLowerCase().includes(searchTermLower)
+    const userMatch = borrow.userId && (
+      borrow.userId.name.toLowerCase().includes(searchTermLower) ||
+      borrow.userId.email.toLowerCase().includes(searchTermLower)
     );
     
     return bookMatch || userMatch || false;
@@ -137,8 +136,7 @@ const BorrowingManagement = () => {
     }
   };
   
-  const getUserName = (userId: string) => {
-    const user = users.find(user => user._id === userId);
+  const getUserName = (user: { name: string } | null) => {
     return user ? user.name : 'Unknown User';
   };
   
@@ -284,27 +282,44 @@ const BorrowingManagement = () => {
               </TableHeader>
               <TableBody>
                 {filteredBorrows.map((borrow) => (
-                  <TableRow key={borrow._id} className={borrow.returned ? "bg-gray-50" : ""}>
-                    <TableCell className="font-medium">{borrow.book?.title || 'Unknown Book'}</TableCell>
-                    <TableCell>{getUserName(borrow.userId)}</TableCell>
+                  <TableRow key={borrow._id}>
+                    <TableCell>
+                      {borrow.bookId ? (
+                        <div>
+                          <div className="font-medium">{borrow.bookId.title}</div>
+                          <div className="text-sm text-gray-500">{borrow.bookId.author}</div>
+                        </div>
+                      ) : (
+                        'Unknown Book'
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {borrow.userId ? (
+                        <div>
+                          <div className="font-medium">{borrow.userId.name}</div>
+                          <div className="text-sm text-gray-500">{borrow.userId.email}</div>
+                        </div>
+                      ) : (
+                        'Unknown User'
+                      )}
+                    </TableCell>
                     <TableCell>{formatDate(borrow.borrowDate)}</TableCell>
                     <TableCell>{formatDate(borrow.dueDate)}</TableCell>
                     <TableCell>
                       {borrow.returned ? (
-                        <span className="text-green-600">Returned</span>
+                        <span className="text-green-600">Returned {borrow.returnDate && `on ${formatDate(borrow.returnDate)}`}</span>
                       ) : (
                         getDaysStatus(borrow.dueDate)
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell>
                       {!borrow.returned && (
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
                           onClick={() => handleReturn(borrow._id)}
-                          className="text-green-600 border-green-600 hover:bg-green-50"
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700"
                         >
-                          <Check className="mr-1 h-4 w-4" />
+                          <Check className="mr-2 h-4 w-4" />
                           Return
                         </Button>
                       )}

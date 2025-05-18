@@ -6,7 +6,8 @@ import {
   Users, 
   PlusCircle,
   Library,
-  Menu
+  Menu,
+  FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -37,6 +38,11 @@ export const AdminSidebar = () => {
       title: 'Borrowing',
       icon: Library,
       path: '/admin/borrowing'
+    },
+    {
+      title: 'Book Requests',
+      icon: FileText,
+      path: '/admin/requests'
     }
   ];
 

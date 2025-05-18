@@ -80,8 +80,15 @@ const returnBook = asyncHandler(async (req, res) => {
 
 const getAllBorrowings = asyncHandler(async (req, res) => {
   const borrowings = await Borrowing.find({})
-    .populate('userId', 'name email')
-    .populate('bookId', 'title');
+    .populate({
+      path: 'userId',
+      select: 'name email role'
+    })
+    .populate({
+      path: 'bookId',
+      select: 'title author isbn category imageUrl quantity'
+    })
+    .sort({ createdAt: -1 });
   res.json(borrowings);
 });
 

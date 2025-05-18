@@ -1,16 +1,59 @@
 import asyncHandler from 'express-async-handler';
 import Book from '../models/bookModel.js';
+import BorrowingRequest from '../models/borrowingRequestModel.js'; // Import BorrowingRequest model
 
 const getBooks = asyncHandler(async (req, res) => {
-  const books = await Book.find({});
-  res.json(books);
+  const { keyword, category } = req.query;
+  const query = {};
+
+  if (keyword) {
+    query.$or = [
+      { title: { $regex: keyword, $options: 'i' } },
+      { author: { $regex: keyword, $options: 'i' } },
+      { isbn: { $regex: keyword, $options: 'i' } },
+    ];
+  }
+
+  if (category) {
+    query.category = { $regex: `^${category}$`, $options: 'i' }; // Exact match for category, case-insensitive
+  }
+
+  const books = await Book.find(query).lean(); // Use .lean() for plain JS objects to modify them
+
+  // Calculate available quantity for each book
+  const booksWithAvailability = await Promise.all(
+    books.map(async (book) => {
+      const activeRequestsCount = await BorrowingRequest.countDocuments({
+        book: book._id,
+        status: { $in: ['approved', 'issued'] },
+      });
+      const availableForRequest = Math.max(0, book.quantity - activeRequestsCount);
+      return {
+        ...book,
+        availableForRequest, // Number of copies actually available for new requests
+        isActuallyAvailable: availableForRequest > 0 // Boolean for easier frontend use
+      };
+    })
+  );
+
+  res.json(booksWithAvailability);
 });
 
 const getBookById = asyncHandler(async (req, res) => {
-  const book = await Book.findById(req.params.id);
+  const book = await Book.findById(req.params.id).lean();
 
   if (book) {
-    res.json(book);
+    const activeRequestsCount = await BorrowingRequest.countDocuments({
+      book: book._id,
+      status: { $in: ['approved', 'issued'] },
+    });
+    const availableForRequest = Math.max(0, book.quantity - activeRequestsCount);
+    
+    res.json({
+      ...book,
+      availableForRequest,
+      isActuallyAvailable: availableForRequest > 0
+    });
   } else {
     res.status(404);
     throw new Error('Book not found');

@@ -1,14 +1,15 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
-import { BookmarkIcon, LogIn, LogOut, User } from 'lucide-react';
+import { BookmarkIcon, LogIn, LogOut, User, BookOpen, FileText } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const Navbar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
   
   const handleLogout = () => {
@@ -45,6 +46,41 @@ export const Navbar = () => {
                 </>
               ) : (
                 <>
+                  {user.role === 'user' && (
+                    <>
+                      <li>
+                        <Link 
+                          to="/dashboard" 
+                          className={`flex items-center space-x-1 hover:text-library-secondary transition-colors ${location.pathname === '/dashboard' ? 'text-library-secondary' : ''}`}
+                        >
+                          <User size={18} />
+                          <span className="hidden md:inline">Dashboard</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link 
+                          to="/books" 
+                          className={`flex items-center space-x-1 hover:text-library-secondary transition-colors ${location.pathname === '/books' ? 'text-library-secondary' : ''}`}
+                        >
+                          <BookOpen size={18} />
+                          <span className="hidden md:inline">Available Books</span>
+                        </Link>
+                      </li>
+                    </>
+                  )}
+                  
+                  {user.role === 'admin' && (
+                    <li>
+                      <Link 
+                        to="/admin/requests" 
+                        className={`flex items-center space-x-1 hover:text-library-secondary transition-colors ${location.pathname === '/admin/requests' ? 'text-library-secondary' : ''}`}
+                      >
+                        <FileText size={18} />
+                        <span className="hidden md:inline">Book Requests</span>
+                      </Link>
+                    </li>
+                  )}
+                  
                   <li className="flex items-center space-x-2">
                     <div className="flex items-center space-x-1">
                       <User size={18} />
